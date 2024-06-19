@@ -1,100 +1,106 @@
 # Installation process of Ansible Server
 
 # Set hostname
-'''bash
+```sh
 hostnamectl set-hostname control
-'''
+```
 
 # Install EPEL repository
-'''bash
+```sh
 wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 yum install epel-release-latest-7.noarch.rpm -y
-'''
+```
 
 # Update system packages
-'''bash
+```sh
 yum update -y
-'''
+```
 
 # Install necessary packages
-'''bash
+```sh
 yum install git python python-level python-pip openssl ansible -y
-'''
+```
 
 # Check Ansible installation
-'''bash
+```sh
 ansible --version
-'''
+```
 
 # Configure Ansible hosts file
-'''bash
-vi /etc/ansible/hosts
-# Add the following under '[demo]' group:
-# private_ip_of_node-1
-# private_ip_of_node-2
-'''
+```sh
+vim /etc/ansible/hosts
+```
+Add the following under '[demo]' group:
+private_ip_of_node-1
+private_ip_of_node-2
 
 # Configure Ansible global configuration
-'''bash
+```sh
 vi /etc/ansible/ansible.cfg
-# Uncomment and modify:
-# inventory = /etc/ansible/hosts
-# sudo_user = root
-'''
+```
+Uncomment and modify:
+
+- inventory = /etc/ansible/hosts
+- sudo_user = root
+
 
 # Create 'ansible' user on all instances
-'''bash
+```sh
 adduser ansible
 passwd ansible
-'''
-
+```
 # Grant sudo permissions to 'ansible' user
-'''bash
+
+```sh
 visudo
-# Add: ansible ALL=(ALL) NOPASSWD: ALL at line 101
-'''
+```
+-  Add: ansible ALL=(ALL) NOPASSWD: ALL at line 101
 
 # SSH configuration on all nodes
-'''bash
+```sh
 vi /etc/ssh/sshd_config
-# Uncomment:
-# PermitRootLogin yes (line 38)
-# PasswordAuthentication yes (line 61)
-# Comment:
-# #PasswordAuthentication no (line 63)
+```
+## Uncomment:
+- PermitRootLogin yes            # line number 38
+- PasswordAuthentication yes     # line number 61
+- Comment:
+- PasswordAuthentication no      # line number 63
+
+```sh
 service sshd restart
-'''
-
+```
 # Switch to 'ansible' user on all nodes
-'''bash
+```sh
 su - ansible
-ssh <private_ip_of_node> # Access each node
-'''
-
+```
+```sh
+ ssh <private_ip_of_node> # Access each node
+``` 
 # Generate SSH keys on Ansible server
-'''bash
+```sh
 ssh-keygen
 cd .ssh
+```
+```sh
 ssh-copy-id ansible@<private_ip_of_node>
-# Enter ansible user's password
-'''
+```
+- Enter ansible user's password
 
 # Verify hosts and groups
-'''bash
+``` sh
 ansible all --list-hosts
-ansible all --list-hosts
-'''
-
+```
 # Ad-hoc Commands
-'''bash
+```sh
 ansible demo -a "ls"
+```
+```sh
 ansible all -a "ls"
-'''
+```
 
-'''bash
+```sh
 ansible demo -a "sudo yum install httpd -y"
-'''
-
-'''bash
+```
+```sh
 ansible demo -ba "yum remove httpd -y" # Use 'ba' to avoid sudo prompt
-'''
+```
